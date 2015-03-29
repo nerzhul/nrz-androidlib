@@ -1,6 +1,6 @@
 # nrz-androidlib
 
-This library is under GPLv3 licence.
+This library is under BSD 2 clauses licence
 
 The goal of this library is to offer a little abstraction layer for Nrz (Loïc Blot) Android projects.
 
