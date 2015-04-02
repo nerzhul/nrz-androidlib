@@ -1,0 +1,15 @@
+<property name="dist.dir" value="dist" />
+
+<target name="dist" depends="compile">
+  <jar destfile="${dist.dir}/nrz-androidlib.jar" basedir="${build.dir}" />
+</target>
+
+<target name="init">
+  <mkdir dir="${build.dir}" />
+  <mkdir dir="${dist.dir}" />
+</target>
+
+<target name="clean">
+  <delete dir="${build.dir}" />
+  <delete dir="${dist.dir}" />
+</target>
