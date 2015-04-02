@@ -10,14 +10,12 @@
   
   <target name="compile" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}"/>
+    <javac srcdir="${src}" destdir="${build.dir}"/>
   </target>
 
   <target name="dist" depends="compile">
     <jar destfile="${dist.dir}/nrz-androidlib.jar" basedir="${build.dir}" />
   </target>
-  
-
   
   <target name="clean">
     <delete dir="${build.dir}" />
