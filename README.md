@@ -6,7 +6,6 @@ The goal of this library is to offer a little abstraction layer for Nrz (Loïc B
 
 This is used in owncloud-SMS app
 
-/**
  * Copyright (c) 2013-2015, Loic Blot <loic.blot@unix-experience.fr>
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -32,4 +31,4 @@ This is used in owncloud-SMS app
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the FreeBSD Project.
-*/
+
