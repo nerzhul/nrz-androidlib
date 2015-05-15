@@ -6,7 +6,6 @@ import android.accounts.Account;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,9 +48,9 @@ public class AndroidAccountAdapter extends ArrayAdapter<Account> {
 				label.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(final View v) {
-						final Bundle bdl = new Bundle();
-						bdl.putString("account",account.name);
-						_activity.startActivity(new Intent(_activity, _newActivityClass), bdl);
+						final Intent i = new Intent(_activity, _newActivityClass);
+						i.putExtra("account", account.name);
+						_activity.startActivity(i);
 					}
 				});
 			}
