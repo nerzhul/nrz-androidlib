@@ -37,15 +37,27 @@ public class SharedPrefs {
 	protected final SharedPreferences _sPrefs;
 	protected final Context _context;
 
-	public SharedPrefs(final Context context, final int prefFile) {
+	public SharedPrefs(Context context, int prefFile) {
 		_context = context;
 
 		_sPrefs = _context.getSharedPreferences(_context.getString(prefFile), Context.MODE_PRIVATE);
 	}
 
-	public void putBoolean(final String prefKey, final Boolean boolValue) {
-		final Editor edit = _sPrefs.edit();
+	public void putBoolean(String prefKey, Boolean boolValue) {
+		Editor edit = _sPrefs.edit();
 		edit.putBoolean(prefKey, boolValue);
-		edit.commit();
+		edit.apply();
 	}
+
+    public void putInteger(String prefKey, Integer intValue) {
+        Editor edit = _sPrefs.edit();
+        edit.putInt(prefKey, intValue);
+        edit.apply();
+    }
+
+    public void putLong(String prefKey, long longValue) {
+        Editor edit = _sPrefs.edit();
+        edit.putLong(prefKey, longValue);
+        edit.apply();
+    }
 }

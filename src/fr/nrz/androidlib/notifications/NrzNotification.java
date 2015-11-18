@@ -36,19 +36,19 @@ import android.content.Context;
 import android.os.Build;
 
 public class NrzNotification {
-	public NrzNotification(final Context ct, final int iconId) {
+	public NrzNotification(Context ct, int iconId) {
 		_iconId = iconId;
 		_ct = ct;
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-	public boolean createNotify(final int nType, final String nTitle, final String nText) {
+	public boolean createNotify(int nType, String nTitle, String nText) {
 		if (_ct == null) {
 			return false;
 		}
-		final NotificationManager notificationManager = (NotificationManager)_ct.getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationManager notificationManager = (NotificationManager)_ct.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		final Builder mBuilder = new Notification.Builder(_ct)
+		Builder mBuilder = new Notification.Builder(_ct)
 		.setContentText(nText)
 		.setContentTitle(nTitle)
 		.setSmallIcon(_iconId);
@@ -58,8 +58,8 @@ public class NrzNotification {
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-	public void cancelNotify(final int nType) {
-		final NotificationManager notificationManager = (NotificationManager)_ct.getSystemService(Context.NOTIFICATION_SERVICE);
+	public void cancelNotify(int nType) {
+		NotificationManager notificationManager = (NotificationManager)_ct.getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.cancel(nType);
 	}
 

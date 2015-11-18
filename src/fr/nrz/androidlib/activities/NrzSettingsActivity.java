@@ -28,8 +28,6 @@ package fr.nrz.androidlib.activities;
  * either expressed or implied, of the FreeBSD Project.
  */
 
-import java.util.Vector;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -41,18 +39,21 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import java.util.Vector;
 
 public class NrzSettingsActivity extends PreferenceActivity {
-	private static final boolean ALWAYS_SIMPLE_PREFS = false;
-	protected static Context _context;
+    private static String TAG = NrzSettingsActivity.class.getSimpleName();
+    protected static Context _context;
 	protected static int _prefsRessourceFile;
-	protected static Vector<BindObjectPref> _boolPrefs = new Vector<BindObjectPref>();
-	protected static Vector<BindObjectPref> _stringPrefs = new Vector<BindObjectPref>();
+	protected static Vector<BindObjectPref> _boolPrefs = new Vector<>();
+	protected static Vector<BindObjectPref> _stringPrefs = new Vector<>();
 
 	@Override
-	protected void onPostCreate(final Bundle savedInstanceState) {
+	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		_context = getBaseContext();
+        NrzSettingsActivity._context = getBaseContext();
 		setupSimplePreferencesScreen();
 	}
 
@@ -63,41 +64,40 @@ public class NrzSettingsActivity extends PreferenceActivity {
 	 */
 	@SuppressWarnings("deprecation")
 	private void setupSimplePreferencesScreen() {
-		if (!isSimplePreferences(this)) {
+		if (!NrzSettingsActivity.isSimplePreferences(this)) {
 			return;
 		}
 
 		// In the simplified UI, fragments are not used at all and we instead
 		// use the older PreferenceActivity APIs.
-		addPreferencesFromResource(_prefsRessourceFile);
+		addPreferencesFromResource(NrzSettingsActivity._prefsRessourceFile);
 		bindPreferences();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean onIsMultiPane() {
-		return isXLargeTablet(this) && !isSimplePreferences(this);
+		return NrzSettingsActivity.isXLargeTablet(this) && !NrzSettingsActivity.isSimplePreferences(this);
 	}
 
 	/**
 	 * Helper method to determine if the device has an extra-large screen. For
 	 * example, 10" tablets are extra-large.
 	 */
-	private static boolean isXLargeTablet(final Context context) {
+	private static boolean isXLargeTablet(Context context) {
 		return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
 	}
 
 	/**
 	 * Determines whether the simplified settings UI should be shown. This is
-	 * true if this is forced via {@link #ALWAYS_SIMPLE_PREFS}, or the device
+	 * true if this is forced via the device
 	 * doesn't have newer APIs like {@link PreferenceFragment}, or the device
 	 * doesn't have an extra-large screen. In these cases, a single-pane
 	 * "simplified" settings UI should be shown.
 	 */
-	protected static boolean isSimplePreferences(final Context context) {
-		return ALWAYS_SIMPLE_PREFS
-				|| Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-				|| !isXLargeTablet(context);
+	protected static boolean isSimplePreferences(Context context) {
+		return (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+                || !NrzSettingsActivity.isXLargeTablet(context);
 	}
 
 	/**
@@ -107,40 +107,40 @@ public class NrzSettingsActivity extends PreferenceActivity {
 	 * immediately updated upon calling this method. The exact display format is
 	 * dependent on the type of preference.
 	 *
-	 * @see #sBindPreferenceSummaryToValueListener
+	 * @see #bindPreferenceBooleanToValue
 	 */
-	public static void bindPreferenceBooleanToValue(final Preference preference, final Boolean defValue) {
+	public void bindPreferenceBooleanToValue(Preference preference, Boolean defValue) {
 		// Set the listener to watch for value changes.
 		preference
 		.setOnPreferenceChangeListener(_bindPreferenceListener);
 
 		// Trigger the listener immediately with the preference's
 		// current value.
-		_bindPreferenceListener.onPreferenceChange(
-				preference,
-				PreferenceManager.getDefaultSharedPreferences(
-						preference.getContext()).getBoolean(
-								preference.getKey(),
-								defValue
-								)
-				);
+        _bindPreferenceListener.onPreferenceChange(
+                preference,
+                PreferenceManager.getDefaultSharedPreferences(
+                        preference.getContext()).getBoolean(
+                        preference.getKey(),
+                        defValue
+                )
+        );
 	}
 
-	public static void bindPreferenceStringToValue(final Preference preference, final String defValue) {
+	public void bindPreferenceStringToValue(Preference preference, String defValue) {
 		// Set the listener to watch for value changes.
 		preference
 		.setOnPreferenceChangeListener(_bindPreferenceListener);
 
 		// Trigger the listener immediately with the preference's
 		// current value.
-		_bindPreferenceListener.onPreferenceChange(
-				preference,
-				PreferenceManager.getDefaultSharedPreferences(
-						preference.getContext()).getString(
-								preference.getKey(),
-								defValue
-								)
-				);
+        _bindPreferenceListener.onPreferenceChange(
+                preference,
+                PreferenceManager.getDefaultSharedPreferences(
+                        preference.getContext()).getString(
+                        preference.getKey(),
+                        defValue
+                )
+        );
 	}
 
 	/**
@@ -148,24 +148,13 @@ public class NrzSettingsActivity extends PreferenceActivity {
 	 * activity is showing a two-pane settings UI.
 	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public static class DataSyncPreferenceFragment extends PreferenceFragment {
+	public class DataSyncPreferenceFragment extends PreferenceFragment {
 		@Override
-		public void onCreate(final Bundle savedInstanceState) {
+		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(_prefsRessourceFile);
+			addPreferencesFromResource(NrzSettingsActivity._prefsRessourceFile);
 
-			// Bind the summaries of EditText/List/Dialog/Ringtone preferences
-			// to their values. When their values change, their summaries are
-			// updated to reflect the new value, per the Android Design
-			// guidelines.
-			for (int i=0; i < _stringPrefs.size(); i++) {
-				bindPreferenceStringToValue(findPreference(_stringPrefs.get(i).name),
-						(String) _stringPrefs.get(i).value);
-			}
-			for (int i=0; i < _boolPrefs.size(); i++) {
-				bindPreferenceBooleanToValue(findPreference(_boolPrefs.get(i).name),
-						(Boolean) _boolPrefs.get(i).value);
-			}
+            bindPreferences();
 		}
 	}
 
@@ -173,22 +162,22 @@ public class NrzSettingsActivity extends PreferenceActivity {
 		// Bind the summaries of EditText/List/Dialog/Ringtone preferences to
 		// their values. When their values change, their summaries are updated
 		// to reflect the new value, per the Android Design guidelines.
-		for (int i=0; i < _stringPrefs.size(); i++) {
-			bindPreferenceStringToValue(findPreference(_stringPrefs.get(i).name),
-					(String) _stringPrefs.get(i).value);
-		}
+		for (BindObjectPref pref: NrzSettingsActivity._stringPrefs) {
+            bindPreferenceStringToValue(findPreference(pref.name),
+                    (String) pref.value);
+        }
 
-		for (int i=0; i < _boolPrefs.size(); i++) {
-			bindPreferenceBooleanToValue(findPreference(_boolPrefs.get(i).name),
-					(Boolean) _boolPrefs.get(i).value);
-		}
+        for (BindObjectPref pref: NrzSettingsActivity._boolPrefs) {
+            bindPreferenceBooleanToValue(findPreference(pref.name),
+                    (Boolean) pref.value);
+        }
 	}
 
 	// The preference object, it's only a key value pair
 	protected class BindObjectPref {
 		public String name;
 		public Object value;
-		public BindObjectPref(final String prefName, final Object prefVal) {
+		public BindObjectPref(String prefName, Object prefVal) {
 			name = prefName;
 			value = prefVal;
 		}
@@ -198,14 +187,16 @@ public class NrzSettingsActivity extends PreferenceActivity {
 	 * A preference value change listener that updates the preference's summary
 	 * to reflect its new value.
 	 */
-	private static Preference.OnPreferenceChangeListener _bindPreferenceListener = new Preference.OnPreferenceChangeListener() {
+	private final Preference.OnPreferenceChangeListener _bindPreferenceListener = new Preference.OnPreferenceChangeListener() {
 		@Override
-		public boolean onPreferenceChange(final Preference preference, final Object value) {
-			if (preference instanceof ListPreference) {
-				handleListPreference(preference.getKey(), value.toString(), (ListPreference) preference);
+		public boolean onPreferenceChange(Preference preference, Object value) {
+            if (preference instanceof ListPreference) {
+                Log.d(TAG, "Changed list preference " + preference.toString() + " value " + value.toString());
+                handleListPreference(preference.getKey(), value.toString(), (ListPreference) preference);
 
 			} else if (preference instanceof CheckBoxPreference) {
-				handleCheckboxPreference(preference.getKey(), (Boolean)value);
+                Log.d(TAG, "Changed checkbox preference " + preference.toString() + " value " + value.toString());
+                handleCheckboxPreference(preference.getKey(), (Boolean) value);
 			} else {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
@@ -215,7 +206,7 @@ public class NrzSettingsActivity extends PreferenceActivity {
 		}
 	};
 
-	protected static void handleCheckboxPreference(final String key, final Boolean value) {}
-	protected static void handleListPreference(final String key, final String value,
-			final ListPreference preference) {}
+    protected void handleCheckboxPreference(String key, Boolean value) {}
+    protected void handleListPreference(String key, String value,
+                                               ListPreference preference) {}
 }
